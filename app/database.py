@@ -1,11 +1,15 @@
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
 from dotenv import load_dotenv
+from pathlib import Path
 import os
 
-load_dotenv()   
+load_dotenv(dotenv_path=Path(__file__).resolve().parent.parent / ".env")   
 
 DATABASE_URL = os.getenv("DATABASE_URL")
+
+if DATABASE_URL and not "+asyncpg" in DATABASE_URL:
+    DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://")
 
 engine = create_async_engine(DATABASE_URL, echo=True)
 
